@@ -1,0 +1,31 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Go
+bin/
+backend/bin/
+*.exe
+*.test
+*.out
+*.db
+backend/*.db
+
+# Persistent Data & Uploads
+data/
+backend/data/
+uploads/
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Environment
+.env
+backend/.env
+frontend/.env
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/

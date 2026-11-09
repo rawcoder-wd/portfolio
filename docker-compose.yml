@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  portfolio:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DATA_DIR=/app/data
+      - ALLOWED_ORIGIN=http://localhost:8080
+      - ADMIN_PASSWORD=admin123
+      - JWT_SECRET=super-secret-jwt-key
+    volumes:
+      - portfolio_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  portfolio_data:
