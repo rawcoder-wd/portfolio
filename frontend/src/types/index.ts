@@ -59,3 +59,26 @@ export interface AdminLoginRequest {
 export interface AdminLoginResponse {
   token: string;
 }
+
+export function getTechStackArray(techStack: any): string[] {
+  if (Array.isArray(techStack)) {
+    return techStack.filter((item): item is string => typeof item === 'string');
+  }
+  if (typeof techStack === 'string') {
+    const trimmed = techStack.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item): item is string => typeof item === 'string');
+      }
+    } catch {
+      // Ignore JSON parse error and fallback to comma-separated split
+    }
+    return trimmed
+      .split(',')
+      .map((s) => s.trim().replace(/^["']|["']$/g, ''))
+      .filter(Boolean);
+  }
+  return [];
+}

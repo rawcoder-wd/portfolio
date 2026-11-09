@@ -88,8 +88,8 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if p.TechStack == "" {
-		p.TechStack = "[]"
+	if len(p.TechStack) == 0 {
+		p.TechStack = models.TechStack{}
 	}
 
 	db := database.DB

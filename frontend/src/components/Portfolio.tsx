@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ExternalLink, ShoppingBag, CheckCircle, AlertCircle, X, Code2 } from 'lucide-react';
 import type { Project } from '../types';
+import { getTechStackArray } from '../types';
 
 interface PortfolioProps {
   projects: Project[];
@@ -129,9 +130,9 @@ export const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
                     </p>
 
                     {/* Tech Stack Badges */}
-                    {project.tech_stack && project.tech_stack.length > 0 && (
+                    {getTechStackArray(project.tech_stack).length > 0 && (
                       <div className="flex flex-wrap gap-1.5 pt-2">
-                        {project.tech_stack.map((tech, idx) => (
+                        {getTechStackArray(project.tech_stack).map((tech, idx) => (
                           <span
                             key={idx}
                             className="px-2.5 py-1 rounded-md bg-slate-800 text-cyan-300 text-xs font-mono border border-slate-700/50"

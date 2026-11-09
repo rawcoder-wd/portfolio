@@ -1,6 +1,101 @@
 package models
 
-import "time"
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"strings"
+	"time"
+)
+
+type TechStack []string
+
+func (t *TechStack) Scan(value interface{}) error {
+	if value == nil {
+		*t = []string{}
+		return nil
+	}
+	var str string
+	switch v := value.(type) {
+	case []byte:
+		str = string(v)
+	case string:
+		str = v
+	default:
+		*t = []string{}
+		return nil
+	}
+
+	str = strings.TrimSpace(str)
+	if str == "" || str == "null" {
+		*t = []string{}
+		return nil
+	}
+
+	var list []string
+	if err := json.Unmarshal([]byte(str), &list); err == nil {
+		if list == nil {
+			*t = []string{}
+		} else {
+			*t = list
+		}
+		return nil
+	}
+
+	parts := strings.Split(str, ",")
+	res := []string{}
+	for _, p := range parts {
+		cleaned := strings.TrimSpace(p)
+		cleaned = strings.Trim(cleaned, `"'[]`)
+		if cleaned != "" {
+			res = append(res, cleaned)
+		}
+	}
+	*t = res
+	return nil
+}
+
+func (t TechStack) Value() (driver.Value, error) {
+	if t == nil {
+		return "[]", nil
+	}
+	b, err := json.Marshal([]string(t))
+	if err != nil {
+		return "[]", nil
+	}
+	return string(b), nil
+}
+
+func (t TechStack) MarshalJSON() ([]byte, error) {
+	if t == nil {
+		return []byte("[]"), nil
+	}
+	return json.Marshal([]string(t))
+}
+
+func (t *TechStack) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" || string(data) == "" || string(data) == `""` {
+		*t = []string{}
+		return nil
+	}
+	var list []string
+	if err := json.Unmarshal(data, &list); err == nil {
+		if list == nil {
+			*t = []string{}
+		} else {
+			*t = list
+		}
+		return nil
+	}
+	var str string
+	if err := json.Unmarshal(data, &str); err == nil {
+		var temp TechStack
+		temp.Scan(str)
+		*t = temp
+		return nil
+	}
+	*t = []string{}
+	return nil
+}
 
 type Settings struct {
 	ID              int       `json:"id" db:"id"`
@@ -23,7 +118,7 @@ type Project struct {
 	Title        string    `json:"title" db:"title"`
 	Summary      string    `json:"summary" db:"summary"`
 	Description  string    `json:"description" db:"description"`
-	TechStack    string    `json:"tech_stack" db:"tech_stack"` // JSON string or comma-separated
+	TechStack    TechStack `json:"tech_stack" db:"tech_stack"`
 	ImageURL     string    `json:"image_url" db:"image_url"`
 	LiveURL      string    `json:"live_url" db:"live_url"`
 	RepoURL      string    `json:"repo_url" db:"repo_url"`

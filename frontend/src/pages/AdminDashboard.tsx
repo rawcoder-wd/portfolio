@@ -16,6 +16,7 @@ import {
   adminUploadImage,
 } from '../api/client';
 import type { Settings, Project, Skill } from '../types';
+import { getTechStackArray } from '../types';
 import {
   User,
   Calendar,
@@ -178,7 +179,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
       title: proj.title,
       summary: proj.summary,
       description: proj.description,
-      tech_stack_str: Array.isArray(proj.tech_stack) ? proj.tech_stack.join(', ') : '',
+      tech_stack_str: getTechStackArray(proj.tech_stack).join(', '),
       image_url: proj.image_url,
       live_url: proj.live_url,
       repo_url: proj.repo_url,
@@ -1036,7 +1037,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
                       <p className="text-sm text-slate-300 line-clamp-2">{proj.summary}</p>
 
                       <div className="flex flex-wrap gap-1.5">
-                        {proj.tech_stack?.map((tech, idx) => (
+                        {getTechStackArray(proj.tech_stack).map((tech, idx) => (
                           <span
                             key={idx}
                             className="px-2 py-0.5 text-xs font-medium bg-slate-950 text-cyan-400 border border-slate-800 rounded-md"
