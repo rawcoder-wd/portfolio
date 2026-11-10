@@ -39,6 +39,7 @@ import {
   FolderGit2,
   Sparkles,
   DollarSign,
+  LayoutDashboard,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -413,779 +414,876 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-300">
+      <div className="min-h-screen bg-[#F4F5F7] flex items-center justify-center text-slate-700">
         <div className="flex items-center space-x-3">
-          <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
-          <span className="text-lg font-medium">Loading control panel...</span>
+          <Loader2 className="w-8 h-8 animate-spin text-[#1F3BB3]" />
+          <span className="text-lg font-medium">Loading Star Admin control panel...</span>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Top Header Navbar */}
-      <header className="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-white tracking-tight flex items-center">
-                Super-User Control Panel
-                <span className="ml-2.5 px-2 py-0.5 text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full">
-                  Admin
-                </span>
-              </h1>
-              <p className="text-xs text-slate-400">Manage portfolio content, settings & consultation leads</p>
-            </div>
-          </div>
+  const getSectionTitle = () => {
+    switch (activeTab) {
+      case 'profile': return 'Profile & CV Management';
+      case 'calcom': return 'Cal.com Consultation Integration';
+      case 'inquiries': return 'Inquiries & Purchase Requests Inbox';
+      case 'projects': return 'Projects Showcase Manager';
+      case 'skills': return 'Skills & Expertise Manager';
+      default: return 'Dashboard';
+    }
+  };
 
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={onBackToHome}
-              className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors"
-            >
-              <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
-              View Site
-            </button>
-            <button
-              onClick={onLogout}
-              className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5 mr-1.5" />
-              Logout
-            </button>
+  return (
+    <div className="min-h-screen bg-[#F4F5F7] text-slate-800 flex font-sans">
+      {/* 1. Vertical Left Sidebar (Clean White Sidebar #ffffff) */}
+      <aside className="w-64 bg-white border-r border-slate-200 fixed inset-y-0 left-0 flex flex-col z-40 shadow-sm">
+        {/* Logo / Brand Header */}
+        <div className="h-16 px-6 border-b border-slate-200 flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-lg bg-[#1F3BB3]/10 border border-[#1F3BB3]/20 flex items-center justify-center text-[#1F3BB3]">
+            <img src="/logo.svg" alt="Logo" className="w-5 h-5" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
+            <Shield className="w-5 h-5 absolute opacity-0" />
+          </div>
+          <div>
+            <span className="font-bold text-slate-900 text-base tracking-tight block">Star Admin 2</span>
+            <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-semibold">Portfolio Control</span>
           </div>
         </div>
-      </header>
 
-      {/* Main Container with Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
-        {/* Global Feedback Banner */}
-        {message && (
-          <div
-            className={`mb-6 p-4 rounded-xl border flex items-center space-x-3 text-sm ${
-              message.type === 'success'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : 'bg-red-500/10 border-red-500/20 text-red-400'
-            }`}
-          >
-            {message.type === 'success' ? (
-              <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
-            ) : (
-              <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            )}
-            <span>{message.text}</span>
-          </div>
-        )}
-
-        {/* Navigation Tabs */}
-        <div className="flex space-x-1 sm:space-x-2 border-b border-slate-800 mb-8 overflow-x-auto pb-px">
+        {/* Navigation Links */}
+        <div className="flex-1 py-6 px-4 space-y-1.5 overflow-y-auto">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`flex items-center space-x-2 py-3 px-4 rounded-t-xl font-medium text-sm transition-all border-b-2 whitespace-nowrap ${
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
               activeTab === 'profile'
-                ? 'border-cyan-400 text-cyan-400 bg-slate-900/50'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'bg-[#1F3BB3] text-white shadow-sm'
+                : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
-            <User className="w-4 h-4" />
-            <span>Profile & CV Upload</span>
+            <User className="w-4 h-4 flex-shrink-0" />
+            <span>Profile & CV</span>
           </button>
 
           <button
             onClick={() => setActiveTab('calcom')}
-            className={`flex items-center space-x-2 py-3 px-4 rounded-t-xl font-medium text-sm transition-all border-b-2 whitespace-nowrap ${
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
               activeTab === 'calcom'
-                ? 'border-cyan-400 text-cyan-400 bg-slate-900/50'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'bg-[#1F3BB3] text-white shadow-sm'
+                : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-4 h-4 flex-shrink-0" />
             <span>Cal.com Integration</span>
           </button>
 
           <button
-            onClick={() => setActiveTab('inquiries')}
-            className={`flex items-center space-x-2 py-3 px-4 rounded-t-xl font-medium text-sm transition-all border-b-2 whitespace-nowrap relative ${
-              activeTab === 'inquiries'
-                ? 'border-cyan-400 text-cyan-400 bg-slate-900/50'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
-            }`}
-          >
-            <Inbox className="w-4 h-4" />
-            <span>Inquiries Inbox</span>
-            {unreadCount > 0 && (
-              <span className="ml-1.5 px-2 py-0.5 text-xs font-bold bg-cyan-500 text-slate-950 rounded-full animate-pulse">
-                {unreadCount}
-              </span>
-            )}
-          </button>
-
-          <button
             onClick={() => setActiveTab('projects')}
-            className={`flex items-center space-x-2 py-3 px-4 rounded-t-xl font-medium text-sm transition-all border-b-2 whitespace-nowrap ${
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
               activeTab === 'projects'
-                ? 'border-cyan-400 text-cyan-400 bg-slate-900/50'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'bg-[#1F3BB3] text-white shadow-sm'
+                : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
-            <span>Projects Showcase</span>
+            <FolderGit2 className="w-4 h-4 flex-shrink-0" />
+            <span>Projects Manager</span>
           </button>
 
           <button
             onClick={() => setActiveTab('skills')}
-            className={`flex items-center space-x-2 py-3 px-4 rounded-t-xl font-medium text-sm transition-all border-b-2 whitespace-nowrap ${
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
               activeTab === 'skills'
-                ? 'border-cyan-400 text-cyan-400 bg-slate-900/50'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'bg-[#1F3BB3] text-white shadow-sm'
+                : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
-            <span>Skills & Expertise</span>
+            <Sparkles className="w-4 h-4 flex-shrink-0" />
+            <span>Skills Manager</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('inquiries')}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+              activeTab === 'inquiries'
+                ? 'bg-[#1F3BB3] text-white shadow-sm'
+                : 'text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <Inbox className="w-4 h-4 flex-shrink-0" />
+              <span>Inquiries Inbox</span>
+            </div>
+            {unreadCount > 0 && (
+              <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${
+                activeTab === 'inquiries' ? 'bg-white text-[#1F3BB3]' : 'bg-red-500 text-white'
+              }`}>
+                {unreadCount}
+              </span>
+            )}
           </button>
         </div>
 
-        {/* Tab 1: Profile & CV Upload */}
-        {activeTab === 'profile' && (
-          <div className="space-y-8 animate-fadeIn">
-            {/* CV Upload Section */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-white flex items-center">
-                    <FileText className="w-5 h-5 text-cyan-400 mr-2" />
-                    Curriculum Vitae (CV) Management
-                  </h3>
-                  <p className="text-sm text-slate-400 mt-1">
-                    Upload your professional CV in PDF format. Visitors can download it instantly from the portfolio header and about section.
-                  </p>
-                </div>
-                {settings.cv_filename && (
-                  <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full text-xs font-medium">
-                    Current: {settings.cv_filename}
-                  </span>
-                )}
-              </div>
+        {/* Sidebar Footer Logout */}
+        <div className="p-4 border-t border-slate-200">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors border border-red-200"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout Session</span>
+          </button>
+        </div>
+      </aside>
 
-              <form onSubmit={handleCVUpload} className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="w-full flex-grow">
-                  <label className="block w-full border-2 border-dashed border-slate-700 hover:border-cyan-500/50 rounded-xl p-4 text-center cursor-pointer bg-slate-950/40 transition-colors">
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={(e) => e.target.files && setCvFile(e.target.files[0])}
-                      className="hidden"
-                    />
-                    <div className="flex flex-col items-center space-y-2">
-                      <Upload className="w-6 h-6 text-cyan-400" />
-                      <span className="text-sm font-medium text-slate-300">
-                        {cvFile ? cvFile.name : 'Choose PDF file or drag & drop here'}
-                      </span>
-                      <span className="text-xs text-slate-500">Maximum size 10MB (.pdf only)</span>
-                    </div>
-                  </label>
-                </div>
-                <button
-                  type="submit"
-                  disabled={!cvFile || uploadingCV}
-                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shadow-lg shadow-cyan-500/10"
-                >
-                  {uploadingCV ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload CV
-                    </>
-                  )}
-                </button>
-              </form>
+      {/* 2. Main Workspace Area (Soft Gray Background #F4F5F7) */}
+      <div className="ml-64 flex-1 flex flex-col min-h-screen">
+        {/* Top Navbar */}
+        <header className="bg-white border-b border-slate-200 h-16 px-8 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <LayoutDashboard className="w-5 h-5 text-[#1F3BB3]" />
+            <h1 className="text-base font-bold text-slate-900 tracking-tight">
+              {getSectionTitle()}
+            </h1>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={onBackToHome}
+              className="inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200"
+            >
+              <ExternalLink className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
+              View Live Portfolio
+            </button>
+            <div className="flex items-center space-x-2 pl-4 border-l border-slate-200">
+              <div className="w-8 h-8 rounded-full bg-[#1F3BB3]/10 text-[#1F3BB3] font-bold text-xs flex items-center justify-center border border-[#1F3BB3]/20">
+                AD
+              </div>
+              <span className="text-xs font-semibold text-slate-700 hidden sm:inline">Administrator</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Container */}
+        <main className="p-8 space-y-8 flex-1">
+          {/* Global Feedback Banner */}
+          {message && (
+            <div
+              className={`p-4 rounded-xl border flex items-center space-x-3 text-sm shadow-sm ${
+                message.type === 'success'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                  : 'bg-red-50 border-red-200 text-red-800'
+              }`}
+            >
+              {message.type === 'success' ? (
+                <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+              ) : (
+                <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
+              )}
+              <span className="font-medium">{message.text}</span>
+            </div>
+          )}
+
+          {/* 4 KPI Summary Cards at the top */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Card 1: Total Projects */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Projects</span>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">{projects.length}</h3>
+                <span className="text-xs text-emerald-600 font-medium mt-1 inline-block">
+                  {projects.filter(p => p.is_available).length} available for purchase
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-[#1F3BB3]/10 border border-[#1F3BB3]/20 flex items-center justify-center text-[#1F3BB3]">
+                <FolderGit2 className="w-6 h-6" />
+              </div>
             </div>
 
-            {/* Hero & About Settings Form */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
-                <User className="w-5 h-5 text-cyan-400 mr-2" />
-                Hero, Bio & Social Links
-              </h3>
-              <p className="text-sm text-slate-400 mb-6">
-                Customize the main headlines, introductory biography, and contact links displayed across the portfolio.
-              </p>
+            {/* Card 2: Total Skills */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Skills</span>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">{skills.length}</h3>
+                <span className="text-xs text-slate-500 font-medium mt-1 inline-block">
+                  Across {new Set(skills.map(s => s.category)).size} categories
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-600">
+                <Sparkles className="w-6 h-6" />
+              </div>
+            </div>
 
-              <form onSubmit={handleSaveSettings} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Card 3: Unread Inquiries */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Unread Inquiries</span>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">{unreadCount}</h3>
+                <span className="text-xs text-blue-600 font-medium mt-1 inline-block">
+                  {inquiries.length} total messages
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600">
+                <Inbox className="w-6 h-6" />
+              </div>
+            </div>
+
+            {/* Card 4: Cal.com Status */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Cal.com Status</span>
+                <h3 className="text-lg font-bold text-slate-900 mt-1 flex items-center">
+                  <span className={`w-2.5 h-2.5 rounded-full mr-2 ${calEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                  {calEnabled ? 'Active' : 'Disabled'}
+                </h3>
+                <span className="text-xs text-slate-500 font-medium mt-1 inline-block">
+                  {calEnabled ? (settings.calcom_username || 'Configured') : 'Widget hidden'}
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                <Calendar className="w-6 h-6" />
+              </div>
+            </div>
+          </div>
+
+          {/* Tab 1: Profile & CV */}
+          {activeTab === 'profile' && (
+            <div className="space-y-6 animate-fadeIn">
+              {/* CV Upload Card */}
+              <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm">
+                <div className="flex items-center justify-between mb-6">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Hero Main Title</label>
+                    <h3 className="text-base font-bold text-slate-900 flex items-center">
+                      <FileText className="w-5 h-5 text-[#1F3BB3] mr-2" />
+                      Curriculum Vitae (CV) Management
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Upload your professional CV in PDF format for public visitor downloads.
+                    </p>
+                  </div>
+                  {settings.cv_filename && (
+                    <span className="px-3 py-1 bg-blue-50 text-[#1F3BB3] border border-blue-200 rounded-full text-xs font-semibold">
+                      Current: {settings.cv_filename}
+                    </span>
+                  )}
+                </div>
+
+                <form onSubmit={handleCVUpload} className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="w-full flex-grow">
+                    <label className="block w-full border-2 border-dashed border-slate-300 hover:border-[#1F3BB3] rounded-xl p-6 text-center cursor-pointer bg-slate-50 transition-colors">
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={(e) => e.target.files && setCvFile(e.target.files[0])}
+                        className="hidden"
+                      />
+                      <div className="flex flex-col items-center space-y-2">
+                        <Upload className="w-6 h-6 text-[#1F3BB3]" />
+                        <span className="text-sm font-semibold text-slate-700">
+                          {cvFile ? cvFile.name : 'Choose PDF file or drag & drop here'}
+                        </span>
+                        <span className="text-xs text-slate-400">Maximum size 10MB (.pdf only)</span>
+                      </div>
+                    </label>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={!cvFile || uploadingCV}
+                    className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-[#1F3BB3] hover:bg-[#183096] transition-colors disabled:opacity-50 text-sm shadow-sm whitespace-nowrap"
+                  >
+                    {uploadingCV ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload CV
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+
+              {/* Hero & Bio Settings Card */}
+              <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm">
+                <h3 className="text-base font-bold text-slate-900 mb-1 flex items-center">
+                  <User className="w-5 h-5 text-[#1F3BB3] mr-2" />
+                  Hero, Bio & Social Links
+                </h3>
+                <p className="text-xs text-slate-500 mb-6">
+                  Customize the main headlines, introductory biography, and contact links displayed across the portfolio.
+                </p>
+
+                <form onSubmit={handleSaveSettings} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-2">Hero Main Title</label>
+                      <input
+                        type="text"
+                        value={settings.hero_title || ''}
+                        onChange={(e) => setSettings({ ...settings, hero_title: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
+                        placeholder="e.g. Full-Stack Software Engineer"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-2">Contact Email</label>
+                      <input
+                        type="email"
+                        value={settings.contact_email || ''}
+                        onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
+                        placeholder="e.g. developer@example.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-2">Hero Subtitle</label>
+                    <textarea
+                      rows={2}
+                      value={settings.hero_subtitle || ''}
+                      onChange={(e) => setSettings({ ...settings, hero_subtitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
+                      placeholder="Short elevator pitch or tagline"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-2">About Section Text</label>
+                    <textarea
+                      rows={5}
+                      value={settings.about_text || ''}
+                      onChange={(e) => setSettings({ ...settings, about_text: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
+                      placeholder="Detailed professional background and philosophy"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-2">GitHub URL</label>
+                      <input
+                        type="url"
+                        value={settings.github_url || ''}
+                        onChange={(e) => setSettings({ ...settings, github_url: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
+                        placeholder="https://github.com/username"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-2">LinkedIn URL</label>
+                      <input
+                        type="url"
+                        value={settings.linkedin_url || ''}
+                        onChange={(e) => setSettings({ ...settings, linkedin_url: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
+                        placeholder="https://linkedin.com/in/username"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="inline-flex items-center px-6 py-3 rounded-xl font-semibold text-white bg-[#1F3BB3] hover:bg-[#183096] transition-all text-sm shadow-sm disabled:opacity-50"
+                    >
+                      {saving ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Save Changes
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: Cal.com Integration */}
+          {activeTab === 'calcom' && (
+            <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 max-w-3xl mx-auto shadow-sm animate-fadeIn">
+              <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                <div className="w-12 h-12 rounded-xl bg-[#1F3BB3]/10 border border-[#1F3BB3]/20 flex items-center justify-center text-[#1F3BB3]">
+                  <Calendar className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Cal.com Consultation Integration</h3>
+                  <p className="text-xs text-slate-500">
+                    Connect your Cal.com account to embed the interactive booking widget directly onto your public portfolio.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSaveCalcom} className="space-y-6">
+                <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                  <div>
+                    <label className="font-semibold text-slate-900 block text-sm">Enable Cal.com Booking Widget</label>
+                    <p className="text-xs text-slate-500">Show or hide the consultation booking section on the public site</p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={calEnabled}
+                    onChange={(e) => setCalEnabled(e.target.checked)}
+                    className="w-5 h-5 rounded border-slate-300 bg-white text-[#1F3BB3] focus:ring-[#1F3BB3] cursor-pointer"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-2">Cal.com API Key (Secret)</label>
+                  <input
+                    type="password"
+                    value={calApiKey}
+                    onChange={(e) => setCalApiKey(e.target.value)}
+                    placeholder="cal_live_xxxxxxxxxxxxxxxxxxxxxxxx"
+                    className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm font-mono shadow-sm"
+                  />
+                  <p className="text-xs text-slate-400 mt-1">
+                    Leave blank to keep your existing saved API key securely in the database.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-2">Cal.com Username</label>
                     <input
                       type="text"
-                      value={settings.hero_title || ''}
-                      onChange={(e) => setSettings({ ...settings, hero_title: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                      placeholder="e.g. Full-Stack Software Engineer"
+                      required={calEnabled}
+                      value={calUsername}
+                      onChange={(e) => setCalUsername(e.target.value)}
+                      placeholder="e.g. john-doe"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Contact Email</label>
+                    <label className="block text-xs font-semibold text-slate-700 mb-2">Event Slug</label>
                     <input
-                      type="email"
-                      value={settings.contact_email || ''}
-                      onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                      placeholder="e.g. developer@example.com"
+                      type="text"
+                      required={calEnabled}
+                      value={calEventSlug}
+                      onChange={(e) => setCalEventSlug(e.target.value)}
+                      placeholder="e.g. 30min or consultation"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1F3BB3]/30 focus:border-[#1F3BB3] text-sm shadow-sm"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Hero Subtitle</label>
-                  <textarea
-                    rows={2}
-                    value={settings.hero_subtitle || ''}
-                    onChange={(e) => setSettings({ ...settings, hero_subtitle: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                    placeholder="Short elevator pitch or tagline"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">About Section Text</label>
-                  <textarea
-                    rows={5}
-                    value={settings.about_text || ''}
-                    onChange={(e) => setSettings({ ...settings, about_text: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                    placeholder="Detailed professional background and philosophy"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">GitHub URL</label>
-                    <input
-                      type="url"
-                      value={settings.github_url || ''}
-                      onChange={(e) => setSettings({ ...settings, github_url: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                      placeholder="https://github.com/username"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">LinkedIn URL</label>
-                    <input
-                      type="url"
-                      value={settings.linkedin_url || ''}
-                      onChange={(e) => setSettings({ ...settings, linkedin_url: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                      placeholder="https://linkedin.com/in/username"
-                    />
-                  </div>
+                <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-800 leading-relaxed">
+                  <strong>How it works:</strong> The backend verifies your API key via Cal.com API on save and stores credentials securely. Only your public username and event slug are exposed to the public frontend for embedding.
                 </div>
 
                 <div className="flex justify-end">
                   <button
                     type="submit"
-                    disabled={saving}
-                    className="inline-flex items-center px-6 py-3 rounded-xl font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 transition-all text-sm shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+                    disabled={savingCal}
+                    className="inline-flex items-center px-6 py-3 rounded-xl font-semibold text-white bg-[#1F3BB3] hover:bg-[#183096] transition-all text-sm shadow-sm disabled:opacity-50"
                   >
-                    {saving ? (
+                    {savingCal ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Saving...
+                        Verifying & Saving...
                       </>
                     ) : (
                       <>
                         <Save className="w-4 h-4 mr-2" />
-                        Save Changes
+                        Save Cal.com Settings
                       </>
                     )}
                   </button>
                 </div>
               </form>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Tab 2: Cal.com Integration */}
-        {activeTab === 'calcom' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-3xl mx-auto animate-fadeIn">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-                <Calendar className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Cal.com Consultation Integration</h3>
-                <p className="text-sm text-slate-400">
-                  Connect your Cal.com account to embed the interactive booking widget directly onto your public portfolio.
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleSaveCalcom} className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-slate-950/60 border border-slate-800 rounded-xl">
+          {/* Tab 3: Inquiries Inbox */}
+          {activeTab === 'inquiries' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
                 <div>
-                  <label className="font-medium text-white block text-sm">Enable Cal.com Booking Widget</label>
-                  <p className="text-xs text-slate-400">Show or hide the consultation booking section on the public site</p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={calEnabled}
-                  onChange={(e) => setCalEnabled(e.target.checked)}
-                  className="w-5 h-5 rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500/50 cursor-pointer"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Cal.com API Key (Secret)</label>
-                <input
-                  type="password"
-                  value={calApiKey}
-                  onChange={(e) => setCalApiKey(e.target.value)}
-                  placeholder="cal_live_xxxxxxxxxxxxxxxxxxxxxxxx"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm font-mono"
-                />
-                <p className="text-xs text-slate-500 mt-1">
-                  Leave blank to keep your existing saved API key securely in the database.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Cal.com Username</label>
-                  <input
-                    type="text"
-                    required={calEnabled}
-                    value={calUsername}
-                    onChange={(e) => setCalUsername(e.target.value)}
-                    placeholder="e.g. john-doe"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                  />
+                  <h3 className="text-base font-bold text-slate-900 flex items-center">
+                    <Inbox className="w-5 h-5 text-[#1F3BB3] mr-2" />
+                    Inquiries & Purchase Requests Inbox
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Unified inbox capturing visitor contact messages and project purchase/licensing offers.
+                  </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Event Slug</label>
-                  <input
-                    type="text"
-                    required={calEnabled}
-                    value={calEventSlug}
-                    onChange={(e) => setCalEventSlug(e.target.value)}
-                    placeholder="e.g. 30min or consultation"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-xl text-xs text-cyan-300/80 leading-relaxed">
-                <strong>How it works:</strong> The backend verifies your API key via Cal.com API on save and stores credentials securely. Only your public username and event slug are exposed to the public frontend for embedding.
-              </div>
-
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={savingCal}
-                  className="inline-flex items-center px-6 py-3 rounded-xl font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 transition-all text-sm shadow-lg shadow-cyan-500/20 disabled:opacity-50"
-                >
-                  {savingCal ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Verifying & Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Cal.com Settings
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Tab 3: Inquiries Inbox */}
-        {activeTab === 'inquiries' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-              <div>
-                <h3 className="text-lg font-semibold text-white flex items-center">
-                  <Inbox className="w-5 h-5 text-cyan-400 mr-2" />
-                  Inquiries & Purchase Requests Inbox
-                </h3>
-                <p className="text-sm text-slate-400 mt-1">
-                  Unified inbox capturing visitor contact messages and project purchase/licensing offers.
-                </p>
-              </div>
-
-              {/* Filter Buttons */}
-              <div className="flex items-center space-x-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <button
-                  onClick={() => setInquiryFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    inquiryFilter === 'all'
-                      ? 'bg-cyan-500 text-slate-950 font-semibold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  All ({inquiries.length})
-                </button>
-                <button
-                  onClick={() => setInquiryFilter('purchase_request')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    inquiryFilter === 'purchase_request'
-                      ? 'bg-cyan-500 text-slate-950 font-semibold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Purchase Requests ({inquiries.filter((i) => i.type === 'purchase_request').length})
-                </button>
-                <button
-                  onClick={() => setInquiryFilter('contact')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    inquiryFilter === 'contact'
-                      ? 'bg-cyan-500 text-slate-950 font-semibold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Contact Messages ({inquiries.filter((i) => i.type === 'contact').length})
-                </button>
-              </div>
-            </div>
-
-            {loadingInquiries ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
-              </div>
-            ) : filteredInquiries.length === 0 ? (
-              <div className="text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl">
-                <Mail className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <h4 className="text-base font-medium text-slate-300">No inquiries found</h4>
-                <p className="text-sm text-slate-500 mt-1">
-                  When visitors submit contact or purchase requests, they will appear here.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredInquiries.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`bg-slate-900 border rounded-2xl p-6 transition-all ${
-                      !item.is_read ? 'border-cyan-500/40 shadow-lg shadow-cyan-500/5 bg-slate-900/90' : 'border-slate-800'
+                {/* Filter Buttons */}
+                <div className="flex items-center space-x-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                  <button
+                    onClick={() => setInquiryFilter('all')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      inquiryFilter === 'all'
+                        ? 'bg-[#1F3BB3] text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-                      <div className="flex items-center space-x-3">
-                        <span
-                          className={`px-2.5 py-1 text-xs font-semibold rounded-full uppercase tracking-wider ${
-                            item.type === 'purchase_request'
-                              ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                              : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                          }`}
-                        >
-                          {item.type === 'purchase_request' ? 'Purchase Request' : 'Contact Message'}
-                        </span>
-                        {!item.is_read && (
-                          <span className="px-2 py-0.5 text-xs font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-full animate-pulse">
-                            Unread
-                          </span>
-                        )}
-                        {item.project_title && (
-                          <span className="text-xs text-slate-400 font-medium bg-slate-800 px-2.5 py-1 rounded-lg">
-                            Project: {item.project_title}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs text-slate-500">
-                        {new Date(item.created_at).toLocaleString()}
-                      </span>
-                    </div>
+                    All ({inquiries.length})
+                  </button>
+                  <button
+                    onClick={() => setInquiryFilter('purchase_request')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      inquiryFilter === 'purchase_request'
+                        ? 'bg-[#1F3BB3] text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Purchases ({inquiries.filter((i) => i.type === 'purchase_request').length})
+                  </button>
+                  <button
+                    onClick={() => setInquiryFilter('contact')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      inquiryFilter === 'contact'
+                        ? 'bg-[#1F3BB3] text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Contact ({inquiries.filter((i) => i.type === 'contact').length})
+                  </button>
+                </div>
+              </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
-                      <div>
-                        <span className="text-slate-500 block text-xs">Sender Name</span>
-                        <span className="font-semibold text-white">{item.sender_name}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block text-xs">Sender Email</span>
-                        <a
-                          href={`mailto:${item.sender_email}`}
-                          className="font-semibold text-cyan-400 hover:underline inline-flex items-center"
-                        >
-                          {item.sender_email}
-                          <ExternalLink className="w-3 h-3 ml-1" />
-                        </a>
-                      </div>
-                      {item.budget_or_subject && (
-                        <div className="md:col-span-2">
-                          <span className="text-slate-500 block text-xs">
-                            {item.type === 'purchase_request' ? 'Budget / Offer Note' : 'Subject'}
+              {loadingInquiries ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-[#1F3BB3]" />
+                </div>
+              ) : filteredInquiries.length === 0 ? (
+                <div className="text-center py-16 bg-white border border-slate-200 rounded-xl shadow-sm">
+                  <Mail className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <h4 className="text-base font-semibold text-slate-800">No inquiries found</h4>
+                  <p className="text-xs text-slate-500 mt-1">
+                    When visitors submit contact or purchase requests, they will appear here.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredInquiries.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`bg-white border rounded-xl p-6 transition-all shadow-sm ${
+                        !item.is_read ? 'border-[#1F3BB3] ring-1 ring-[#1F3BB3]/20 bg-blue-50/20' : 'border-slate-200'
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <div className="flex items-center space-x-3">
+                          <span
+                            className={`px-2.5 py-1 text-xs font-semibold rounded-full uppercase tracking-wider ${
+                              item.type === 'purchase_request'
+                                ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                                : 'bg-blue-100 text-blue-700 border border-blue-200'
+                            }`}
+                          >
+                            {item.type === 'purchase_request' ? 'Purchase Request' : 'Contact Message'}
                           </span>
-                          <span className="font-medium text-slate-200">{item.budget_or_subject}</span>
+                          {!item.is_read && (
+                            <span className="px-2 py-0.5 text-xs font-bold bg-[#1F3BB3] text-white rounded-full animate-pulse">
+                              Unread
+                            </span>
+                          )}
+                          {item.project_title && (
+                            <span className="text-xs text-slate-600 font-semibold bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                              Project: {item.project_title}
+                            </span>
+                          )}
                         </div>
-                      )}
-                    </div>
+                        <span className="text-xs text-slate-400 font-medium">
+                          {new Date(item.created_at).toLocaleString()}
+                        </span>
+                      </div>
 
-                    <div className="mb-6">
-                      <span className="text-slate-500 block text-xs mb-1">Message</span>
-                      <p className="text-slate-300 text-sm whitespace-pre-wrap bg-slate-950 p-4 rounded-xl border border-slate-800">
-                        {item.message}
-                      </p>
-                    </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div>
+                          <span className="text-slate-400 block text-xs font-semibold uppercase">Sender Name</span>
+                          <span className="font-bold text-slate-900">{item.sender_name}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-xs font-semibold uppercase">Sender Email</span>
+                          <a
+                            href={`mailto:${item.sender_email}`}
+                            className="font-bold text-[#1F3BB3] hover:underline inline-flex items-center"
+                          >
+                            {item.sender_email}
+                            <ExternalLink className="w-3 h-3 ml-1" />
+                          </a>
+                        </div>
+                        {item.budget_or_subject && (
+                          <div className="md:col-span-2">
+                            <span className="text-slate-400 block text-xs font-semibold uppercase">
+                              {item.type === 'purchase_request' ? 'Budget / Offer Note' : 'Subject'}
+                            </span>
+                            <span className="font-semibold text-slate-800">{item.budget_or_subject}</span>
+                          </div>
+                        )}
+                      </div>
 
-                    <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800/80">
-                      {!item.is_read && (
-                        <button
-                          onClick={() => handleToggleRead(item.id, item.is_read)}
-                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors"
+                      <div className="mb-6">
+                        <span className="text-slate-400 block text-xs font-semibold uppercase mb-1">Message</span>
+                        <p className="text-slate-700 text-sm whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          {item.message}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                        {!item.is_read && (
+                          <button
+                            onClick={() => handleToggleRead(item.id, item.is_read)}
+                            className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1F3BB3] bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors"
+                          >
+                            <Check className="w-3.5 h-3.5 mr-1.5" />
+                            Mark as Read
+                          </button>
+                        )}
+                        <a
+                          href={`mailto:${item.sender_email}?subject=Re: Portfolio Inquiry`}
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200"
                         >
-                          <Check className="w-3.5 h-3.5 mr-1.5" />
-                          Mark as Read
+                          <Mail className="w-3.5 h-3.5 mr-1.5" />
+                          Reply via Email
+                        </a>
+                        <button
+                          onClick={() => handleDeleteInquiry(item.id)}
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                          Delete
                         </button>
-                      )}
-                      <a
-                        href={`mailto:${item.sender_email}?subject=Re: Portfolio Inquiry`}
-                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors"
-                      >
-                        <Mail className="w-3.5 h-3.5 mr-1.5" />
-                        Reply via Email
-                      </a>
-                      <button
-                        onClick={() => handleDeleteInquiry(item.id)}
-                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                        Delete
-                      </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Tab 4: Projects Manager */}
+          {activeTab === 'projects' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 flex items-center">
+                    <FolderGit2 className="w-5 h-5 text-[#1F3BB3] mr-2" />
+                    Projects Showcase Manager
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Create, edit, delete portfolio projects, upload thumbnail images, manage tech stack tags, price notes, and availability toggles.
+                  </p>
+                </div>
+                <button
+                  onClick={openCreateProjectModal}
+                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-semibold text-white bg-[#1F3BB3] hover:bg-[#183096] transition-colors text-xs shadow-sm whitespace-nowrap"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Project
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {projects.map((proj) => (
+                  <div
+                    key={proj.id}
+                    className="bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col justify-between shadow-sm"
+                  >
+                    <div>
+                      <div className="h-48 bg-slate-100 relative overflow-hidden border-b border-slate-200">
+                        {proj.image_url ? (
+                          <img
+                            src={proj.image_url}
+                            alt={proj.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400">
+                            <FolderGit2 className="w-12 h-12" />
+                          </div>
+                        )}
+                        <div className="absolute top-3 right-3 flex items-center space-x-2">
+                          <span
+                            className={`px-2.5 py-1 text-xs font-semibold rounded-full uppercase tracking-wider backdrop-blur-md shadow-sm ${
+                              proj.is_available
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                : 'bg-amber-100 text-amber-800 border border-amber-200'
+                            }`}
+                          >
+                            {proj.is_available ? 'Available' : 'Unavailable'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-6 space-y-4">
+                        <div className="flex items-start justify-between">
+                          <h4 className="text-base font-bold text-slate-900">{proj.title}</h4>
+                          {proj.price_note && (
+                            <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 bg-blue-50 text-[#1F3BB3] border border-blue-200 rounded-lg">
+                              <DollarSign className="w-3 h-3 mr-0.5" />
+                              {proj.price_note}
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-slate-600 line-clamp-2">{proj.summary}</p>
+
+                        <div className="flex flex-wrap gap-1.5">
+                          {getTechStackArray(proj.tech_stack).map((tech, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-0.5 text-xs font-medium bg-slate-100 text-[#1F3BB3] border border-slate-200 rounded-md"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 pt-0 flex items-center justify-between border-t border-slate-100 mt-4">
+                      <div className="flex items-center space-x-3 text-xs text-slate-500">
+                        {proj.live_url && (
+                          <a
+                            href={proj.live_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:text-[#1F3BB3] font-semibold inline-flex items-center"
+                          >
+                            Live <ExternalLink className="w-3 h-3 ml-1" />
+                          </a>
+                        )}
+                        {proj.repo_url && (
+                          <a
+                            href={proj.repo_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:text-[#1F3BB3] font-semibold inline-flex items-center"
+                          >
+                            Repo <ExternalLink className="w-3 h-3 ml-1" />
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => openEditProjectModal(proj)}
+                          className="p-2 rounded-xl text-[#1F3BB3] bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
+                          title="Edit Project"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProject(proj.id)}
+                          className="p-2 rounded-xl text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
+                          title="Delete Project"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Tab 4: Projects Manager */}
-        {activeTab === 'projects' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-              <div>
-                <h3 className="text-lg font-semibold text-white flex items-center">
-                  <FolderGit2 className="w-5 h-5 text-cyan-400 mr-2" />
-                  Projects Manager
-                </h3>
-                <p className="text-sm text-slate-400 mt-1">
-                  Create, edit, delete portfolio projects, upload thumbnail images, manage tech stack tags, price notes, and availability toggles.
-                </p>
-              </div>
-              <button
-                onClick={openCreateProjectModal}
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 transition-colors text-sm shadow-lg shadow-cyan-500/10 whitespace-nowrap"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add New Project
-              </button>
             </div>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {projects.map((proj) => (
-                <div
-                  key={proj.id}
-                  className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between shadow-xl"
+          {/* Tab 5: Skills Manager */}
+          {activeTab === 'skills' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 flex items-center">
+                    <Sparkles className="w-5 h-5 text-[#1F3BB3] mr-2" />
+                    Skills & Expertise Manager
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Create, edit, and delete technical skills with category classification, proficiency level, and your unique 'How I Learned It' story.
+                  </p>
+                </div>
+                <button
+                  onClick={openCreateSkillModal}
+                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-semibold text-white bg-[#1F3BB3] hover:bg-[#183096] transition-colors text-xs shadow-sm whitespace-nowrap"
                 >
-                  <div>
-                    <div className="h-48 bg-slate-950 relative overflow-hidden border-b border-slate-800">
-                      {proj.image_url ? (
-                        <img
-                          src={proj.image_url}
-                          alt={proj.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-600">
-                          <FolderGit2 className="w-12 h-12" />
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Skill
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {skills.map((sk) => (
+                  <div
+                    key={sk.id}
+                    className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between shadow-sm space-y-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2.5 py-1 text-xs font-semibold bg-blue-50 text-[#1F3BB3] border border-blue-200 rounded-lg">
+                          {sk.category}
+                        </span>
+                        <span className="text-xs font-bold text-slate-700">{sk.proficiency}%</span>
+                      </div>
+
+                      <h4 className="text-base font-bold text-slate-900">{sk.name}</h4>
+
+                      {/* Proficiency bar */}
+                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200">
+                        <div
+                          className="bg-[#1F3BB3] h-full rounded-full transition-all duration-500"
+                          style={{ width: `${sk.proficiency}%` }}
+                        ></div>
+                      </div>
+
+                      {sk.learning_story && (
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 mt-3">
+                          <span className="text-[10px] font-bold text-[#1F3BB3] uppercase tracking-wider block mb-1">
+                            How I Learned It
+                          </span>
+                          <p className="text-xs text-slate-600 line-clamp-3">{sk.learning_story}</p>
                         </div>
                       )}
-                      <div className="absolute top-3 right-3 flex items-center space-x-2">
-                        <span
-                          className={`px-2.5 py-1 text-xs font-semibold rounded-full uppercase tracking-wider backdrop-blur-md ${
-                            proj.is_available
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                          }`}
-                        >
-                          {proj.is_available ? 'Available' : 'Unavailable'}
-                        </span>
-                      </div>
                     </div>
 
-                    <div className="p-6 space-y-4">
-                      <div className="flex items-start justify-between">
-                        <h4 className="text-lg font-bold text-white">{proj.title}</h4>
-                        {proj.price_note && (
-                          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-lg">
-                            <DollarSign className="w-3 h-3 mr-0.5" />
-                            {proj.price_note}
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="text-sm text-slate-300 line-clamp-2">{proj.summary}</p>
-
-                      <div className="flex flex-wrap gap-1.5">
-                        {getTechStackArray(proj.tech_stack).map((tech, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-0.5 text-xs font-medium bg-slate-950 text-cyan-400 border border-slate-800 rounded-md"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 pt-0 flex items-center justify-between border-t border-slate-800/80 mt-4">
-                    <div className="flex items-center space-x-3 text-xs text-slate-400">
-                      {proj.live_url && (
-                        <a
-                          href={proj.live_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-cyan-400 inline-flex items-center"
-                        >
-                          Live <ExternalLink className="w-3 h-3 ml-1" />
-                        </a>
-                      )}
-                      {proj.repo_url && (
-                        <a
-                          href={proj.repo_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-cyan-400 inline-flex items-center"
-                        >
-                          Repo <ExternalLink className="w-3 h-3 ml-1" />
-                        </a>
-                      )}
-                    </div>
-
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-100">
                       <button
-                        onClick={() => openEditProjectModal(proj)}
-                        className="p-2 rounded-xl text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 transition-colors"
-                        title="Edit Project"
+                        onClick={() => openEditSkillModal(sk)}
+                        className="p-2 rounded-xl text-[#1F3BB3] bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
+                        title="Edit Skill"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDeleteProject(proj.id)}
-                        className="p-2 rounded-xl text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
-                        title="Delete Project"
+                        onClick={() => handleDeleteSkill(sk.id)}
+                        className="p-2 rounded-xl text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
+                        title="Delete Skill"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tab 5: Skills Manager */}
-        {activeTab === 'skills' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-              <div>
-                <h3 className="text-lg font-semibold text-white flex items-center">
-                  <Sparkles className="w-5 h-5 text-cyan-400 mr-2" />
-                  Skills & Expertise Manager
-                </h3>
-                <p className="text-sm text-slate-400 mt-1">
-                  Create, edit, and delete technical skills with category classification, proficiency level, and your unique 'How I Learned It' story.
-                </p>
+                ))}
               </div>
-              <button
-                onClick={openCreateSkillModal}
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 transition-colors text-sm shadow-lg shadow-cyan-500/10 whitespace-nowrap"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add New Skill
-              </button>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {skills.map((sk) => (
-                <div
-                  key={sk.id}
-                  className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl space-y-4"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-1 text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-lg">
-                        {sk.category}
-                      </span>
-                      <span className="text-xs font-bold text-slate-300">{sk.proficiency}%</span>
-                    </div>
-
-                    <h4 className="text-lg font-bold text-white">{sk.name}</h4>
-
-                    {/* Proficiency bar */}
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                      <div
-                        className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full transition-all duration-500"
-                        style={{ width: `${sk.proficiency}%` }}
-                      ></div>
-                    </div>
-
-                    {sk.learning_story && (
-                      <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 mt-3">
-                        <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block mb-1">
-                          How I Learned It
-                        </span>
-                        <p className="text-xs text-slate-300 line-clamp-3">{sk.learning_story}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-800/80">
-                    <button
-                      onClick={() => openEditSkillModal(sk)}
-                      className="p-2 rounded-xl text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 transition-colors"
-                      title="Edit Skill"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteSkill(sk.id)}
-                      className="p-2 rounded-xl text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
-                      title="Delete Skill"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+          )}
+        </main>
       </div>
 
       {/* Project Modal */}
       {projectModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl p-6 sm:p-8 my-8 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-              <h3 className="text-lg font-bold text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl p-6 sm:p-8 my-8 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900">
                 {editingProject ? 'Edit Portfolio Project' : 'Create New Portfolio Project'}
               </h3>
               <button
                 onClick={() => setProjectModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg bg-slate-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1194,73 +1292,73 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
             <form onSubmit={handleSaveProject} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Project Title</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Project Title</label>
                   <input
                     type="text"
                     value={projectForm.title}
                     onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Display Order</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Display Order</label>
                   <input
                     type="number"
                     value={projectForm.display_order}
                     onChange={(e) => setProjectForm({ ...projectForm, display_order: Number(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Summary (Short Card Text)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Summary (Short Card Text)</label>
                 <input
                   type="text"
                   value={projectForm.summary}
                   onChange={(e) => setProjectForm({ ...projectForm, summary: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Full Description / Details</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Full Description / Details</label>
                 <textarea
                   rows={3}
                   value={projectForm.description}
                   onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Tech Stack <span className="text-slate-500">(comma separated, e.g. React, TypeScript, Tailwind)</span>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Tech Stack <span className="text-slate-400 font-normal">(comma separated, e.g. React, TypeScript, Tailwind)</span>
                 </label>
                 <input
                   type="text"
                   value={projectForm.tech_stack_str}
                   onChange={(e) => setProjectForm({ ...projectForm, tech_stack_str: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Thumbnail Image URL or Upload</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Thumbnail Image URL or Upload</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={projectForm.image_url}
                     onChange={(e) => setProjectForm({ ...projectForm, image_url: e.target.value })}
                     placeholder="/uploads/thumbnail.png or https://..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   />
-                  <label className="inline-flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-xl text-xs font-semibold cursor-pointer whitespace-nowrap border border-slate-700">
+                  <label className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#1F3BB3] rounded-xl text-xs font-semibold cursor-pointer whitespace-nowrap border border-slate-200">
                     <Upload className="w-3.5 h-3.5 mr-1.5" />
                     {uploadingProjImg ? 'Uploading...' : 'Upload Image'}
                     <input
@@ -1275,33 +1373,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Live Demo URL</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Live Demo URL</label>
                   <input
                     type="url"
                     value={projectForm.live_url}
                     onChange={(e) => setProjectForm({ ...projectForm, live_url: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Source Code Repo URL</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Source Code Repo URL</label>
                   <input
                     type="url"
                     value={projectForm.repo_url}
                     onChange={(e) => setProjectForm({ ...projectForm, repo_url: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Price Note (e.g. "$499 / license")</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Price Note (e.g. "$499 / license")</label>
                   <input
                     type="text"
                     value={projectForm.price_note}
                     onChange={(e) => setProjectForm({ ...projectForm, price_note: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   />
                 </div>
 
@@ -1311,26 +1409,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
                     id="proj_is_available"
                     checked={projectForm.is_available}
                     onChange={(e) => setProjectForm({ ...projectForm, is_available: e.target.checked })}
-                    className="w-4 h-4 text-cyan-500 bg-slate-950 border-slate-700 rounded focus:ring-cyan-500"
+                    className="w-4 h-4 text-[#1F3BB3] bg-white border-slate-300 rounded focus:ring-[#1F3BB3]"
                   />
-                  <label htmlFor="proj_is_available" className="text-xs font-medium text-slate-200 cursor-pointer">
+                  <label htmlFor="proj_is_available" className="text-xs font-semibold text-slate-700 cursor-pointer">
                     Available for Purchase / Inquiries
                   </label>
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setProjectModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-2 rounded-xl text-xs font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300"
+                  className="px-6 py-2 rounded-xl text-xs font-semibold text-white bg-[#1F3BB3] hover:bg-[#183096] shadow-sm"
                 >
                   {saving ? 'Saving...' : 'Save Project'}
                 </button>
@@ -1342,15 +1440,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
 
       {/* Skill Modal */}
       {skillModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 sm:p-8 my-8 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-              <h3 className="text-lg font-bold text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 sm:p-8 my-8 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900">
                 {editingSkill ? 'Edit Technical Skill' : 'Create New Technical Skill'}
               </h3>
               <button
                 onClick={() => setSkillModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg bg-slate-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1358,23 +1456,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
 
             <form onSubmit={handleSaveSkill} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Skill Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Skill Name</label>
                 <input
                   type="text"
                   value={skillForm.name}
                   onChange={(e) => setSkillForm({ ...skillForm, name: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
                   <select
                     value={skillForm.category}
                     onChange={(e) => setSkillForm({ ...skillForm, category: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                   >
                     <option value="Frontend">Frontend</option>
                     <option value="Backend">Backend</option>
@@ -1385,12 +1483,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Display Order</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Display Order</label>
                   <input
                     type="number"
                     value={skillForm.display_order}
                     onChange={(e) => setSkillForm({ ...skillForm, display_order: Number(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                     required
                   />
                 </div>
@@ -1398,8 +1496,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs font-medium text-slate-300">Proficiency Level</label>
-                  <span className="text-xs font-bold text-cyan-400">{skillForm.proficiency}%</span>
+                  <label className="text-xs font-semibold text-slate-700">Proficiency Level</label>
+                  <span className="text-xs font-bold text-[#1F3BB3]">{skillForm.proficiency}%</span>
                 </div>
                 <input
                   type="range"
@@ -1407,33 +1505,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBack
                   max="100"
                   value={skillForm.proficiency}
                   onChange={(e) => setSkillForm({ ...skillForm, proficiency: Number(e.target.value) })}
-                  className="w-full accent-cyan-400 bg-slate-950 cursor-pointer"
+                  className="w-full accent-[#1F3BB3] bg-slate-200 cursor-pointer rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">'How I Learned It' Story</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">'How I Learned It' Story</label>
                 <textarea
                   rows={4}
                   value={skillForm.learning_story}
                   onChange={(e) => setSkillForm({ ...skillForm, learning_story: e.target.value })}
                   placeholder="Share the project, challenge, or breakthrough where you mastered this skill..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#1F3BB3] shadow-sm"
                 />
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setSkillModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-2 rounded-xl text-xs font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300"
+                  className="px-6 py-2 rounded-xl text-xs font-semibold text-white bg-[#1F3BB3] hover:bg-[#183096] shadow-sm"
                 >
                   {saving ? 'Saving...' : 'Save Skill'}
                 </button>
